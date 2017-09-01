@@ -1,0 +1,13 @@
+{
+  "development": {
+    "use_env_variable": "postgres://omtwifzv:fE-YznkiKDu09gyx42nGVdb1myzXert5@babar.elephantsql.com:5432/omtwifzv"
+  },
+  "test": {
+    "host": "127.0.0.1",
+    "port": 5432,
+    "username": "mnahirnyi",
+    "password": "wwl3000W",
+    "database": "todo-dev",
+    "dialect": "postgres"
+  }
+}
