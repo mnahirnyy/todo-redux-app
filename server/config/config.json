@@ -1,6 +1,12 @@
 {
   "development": {
-    "use_env_variable": "postgres://omtwifzv:fE-YznkiKDu09gyx42nGVdb1myzXert5@babar.elephantsql.com:5432/omtwifzv"
+    "url": "postgres://omtwifzv:fE-YznkiKDu09gyx42nGVdb1myzXert5@babar.elephantsql.com:5432/omtwifzv",
+    "host": "babar.elephantsql.com",
+    "port": 5432,
+    "username": "omtwifzv",
+    "password": "fE-YznkiKDu09gyx42nGVdb1myzXert5",
+    "database": "omtwifzv",
+    "dialect": "postgres"
   },
   "test": {
     "host": "127.0.0.1",
