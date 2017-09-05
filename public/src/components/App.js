@@ -5,9 +5,6 @@ import { bindActionCreators } from 'redux';
 import { getTodos, getTodo, createTodo, editTodo, deleteTodo } from '../actions/index';
 
 class App extends Component {
-    componentWillMount() {
-        this.props.deleteTodo({ id: 2 });
-    }
     componentDidUpdate() {
         const { didEdit, didCreate, didDelete } = this.props.todos;
         if (didCreate || didEdit || didDelete) {
