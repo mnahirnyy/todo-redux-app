@@ -43800,11 +43800,11 @@
 
 	var _reduxForm = __webpack_require__(284);
 
-	var _auth_reducer = __webpack_require__(!(function webpackMissingModule() { var e = new Error("Cannot find module \"./auth_reducer\""); e.code = 'MODULE_NOT_FOUND'; throw e; }()));
+	var _auth_reducer = __webpack_require__(550);
 
 	var _auth_reducer2 = _interopRequireDefault(_auth_reducer);
 
-	var _user_reducer = __webpack_require__(!(function webpackMissingModule() { var e = new Error("Cannot find module \"./user_reducer\""); e.code = 'MODULE_NOT_FOUND'; throw e; }()));
+	var _user_reducer = __webpack_require__(551);
 
 	var _user_reducer2 = _interopRequireDefault(_user_reducer);
 
@@ -43820,6 +43820,68 @@
 	});
 
 	exports.default = rootReducer;
+
+/***/ }),
+/* 550 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+	exports.default = function () {
+	  var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : INITIAL_STATE;
+	  var action = arguments[1];
+
+	  switch (action.type) {
+	    case _types.AUTH_USER:
+	      return _extends({}, state, { error: '', message: '', authenticated: true });
+	    case _types.UNAUTH_USER:
+	      return _extends({}, state, { authenticated: false, error: action.payload });
+	    case _types.AUTH_ERROR:
+	      return _extends({}, state, { error: action.payload });
+	  }
+
+	  return state;
+	};
+
+	var _types = __webpack_require__(544);
+
+	var INITIAL_STATE = { error: '', message: '', content: '', authenticated: false };
+
+/***/ }),
+/* 551 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+	exports.default = function () {
+	  var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : INITIAL_STATE;
+	  var action = arguments[1];
+
+	  switch (action.type) {
+	    case _types.FETCH_USER:
+	      return _extends({}, state, { profile: action.payload.user });
+	    case _types.ERROR_RESPONSE:
+	      return _extends({}, state, { error: action.payload });
+	  }
+
+	  return state;
+	};
+
+	var _types = __webpack_require__(544);
+
+	var INITIAL_STATE = { profile: {}, message: '', error: '' };
 
 /***/ })
 /******/ ]);
