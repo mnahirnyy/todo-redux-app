@@ -1,8 +1,14 @@
 import { combineReducers } from 'redux';
-import todosReducer from './todosReducer';
+import { reducer as formReducer } from 'redux-form';
+import authReducer from './auth_reducer';
+import userReducer from './user_reducer';
+// import todosReducer from './todosReducer';
 
 const rootReducer = combineReducers({
-  todos: todosReducer,
+  form: formReducer,
+  auth: authReducer,
+  user: userReducer,
+  // todos: todosReducer,
 });
 
 export default rootReducer;
