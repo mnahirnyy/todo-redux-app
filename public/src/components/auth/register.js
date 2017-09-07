@@ -53,16 +53,28 @@ class Register extends Component {
         return (
             <div className="container">
                 <form className="form-signin" name="form" onSubmit={handleSubmit(this.handleFormSubmit.bind(this))}>
-                    <h2 className="form-signin-heading">REGISTER</h2>
-                    <label for="inputFirstname" className="sr-only">Firstname</label>
-                    <Field id="inputFirstname" name="inputFirstname" type="text" className="form-control" placeholder="First name" component="input" />
-                    <label for="inputLastname" className="sr-only">Lastname</label>
-                    <Field id="inputLastname" name="inputLastname" type="text" className="form-control" placeholder="Last name" component="input" />
-                    <label for="inputEmail" className="sr-only">Email</label>
-                    <Field id="inputEmail" name="inputEmail" type="email" className="form-control" placeholder="Email address" component="input" />
-                    <label for="inputPassword" className="sr-only">Password</label>
-                    <Field id="inputPassword" name="inputPassword" type="password" className="form-control" placeholder="Password" component="input" />
-                    <button className="btn btn-lg btn-primary btn-block" type="submit">Register</button>
+                    <h2 className="form-signin-heading">Please sign up</h2>
+                    <div className="form-group">
+                        <label for="inputFirstname" className="sr-only">Firstname</label>
+                        <Field id="inputFirstname" name="inputFirstname" type="text" className="form-control" placeholder="First name" component="input" />
+                    </div>
+                    <div className="form-group">
+                        <label for="inputLastname" className="sr-only">Lastname</label>
+                        <Field id="inputLastname" name="inputLastname" type="text" className="form-control" placeholder="Last name" component="input" />
+                    </div>
+                    <div className="form-group">
+                        <label for="inputEmail" className="sr-only">Email</label>
+                        <Field id="inputEmail" name="inputEmail" type="email" className="form-control" placeholder="Email address" component="input" />
+                    </div>
+                    <div className="form-group">
+                        <label for="inputPassword" className="sr-only">Password</label>
+                        <Field id="inputPassword" name="inputPassword" type="password" className="form-control" placeholder="Password" component="input" />
+                    </div>
+                    <div className="form-group">
+                        <div className="col-sm-offset-2 col-sm-10">
+                            <button className="btn btn-primary btn-block" type="submit">Register</button>
+                        </div>
+                    </div>
                     {this.showError()}
                 </form>
             </div>
