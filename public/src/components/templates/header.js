@@ -29,7 +29,6 @@ class HeaderTemplate extends Component {
 
   render() {
     return (
-      <div>
         <nav className="navbar navbar-default navbar-fixed-top">
           <div className="container">
             <div className="navbar-header">
@@ -48,7 +47,6 @@ class HeaderTemplate extends Component {
             </div>
           </div>
         </nav>
-      </div>
     );
   }
 }

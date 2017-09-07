@@ -27,12 +27,20 @@ class Login extends Component {
         return (
             <div className="container">
                 <form className="form-signin" name="form" onSubmit={handleSubmit(this.handleFormSubmit.bind(this))}>
-                    <h2 className="form-signin-heading">LOGIN</h2>
-                    <label for="inputEmail" className="sr-only">Email</label>
-                    <Field id="inputEmail" name="inputEmail" type="email" className="form-control" placeholder="Email address" component="input" />
-                    <label for="inputPassword" className="sr-only">Password</label>
-                    <Field id="inputPassword" name="inputPassword" type="password" className="form-control" placeholder="Password" component="input" />
-                    <button className="btn btn-lg btn-primary btn-block" type="submit">Login</button>
+                    <h2 className="form-signin-heading">Please sign in</h2>
+                    <div className="form-group">
+                        <label for="inputEmail" className="sr-only">Email</label>
+                        <Field id="inputEmail" name="inputEmail" type="email" className="form-control" placeholder="Email address" component="input" />
+                    </div>
+                    <div className="form-group">
+                        <label for="inputPassword" className="sr-only">Password</label>
+                        <Field id="inputPassword" name="inputPassword" type="password" className="form-control" placeholder="Password" component="input" />
+                    </div>
+                    <div className="form-group"> 
+                        <div className="col-sm-offset-2 col-sm-10">
+                            <button className="btn btn-primary btn-block" type="submit">Login</button>
+                        </div>
+                    </div>
                     {this.showError()}
                 </form>
             </div>

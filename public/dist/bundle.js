@@ -29698,7 +29698,7 @@
 	      return _react2.default.createElement(
 	        'div',
 	        null,
-	        _react2.default.createElement(_header2.default, { logo: 'Your Site' }),
+	        _react2.default.createElement(_header2.default, { logo: 'TuDooShe4ka' }),
 	        _react2.default.createElement(
 	          'div',
 	          { className: 'container' },
@@ -29800,38 +29800,34 @@
 	    key: 'render',
 	    value: function render() {
 	      return _react2.default.createElement(
-	        'div',
-	        null,
+	        'nav',
+	        { className: 'navbar navbar-default navbar-fixed-top' },
 	        _react2.default.createElement(
-	          'nav',
-	          { className: 'navbar navbar-default navbar-fixed-top' },
+	          'div',
+	          { className: 'container' },
 	          _react2.default.createElement(
 	            'div',
-	            { className: 'container' },
+	            { className: 'navbar-header' },
 	            _react2.default.createElement(
-	              'div',
-	              { className: 'navbar-header' },
-	              _react2.default.createElement(
-	                'button',
-	                { type: 'button', className: 'navbar-toggle collapsed', 'data-toggle': 'collapse', 'data-target': '#nav-collapse' },
-	                _react2.default.createElement('span', { className: 'icon-bar' }),
-	                _react2.default.createElement('span', { className: 'icon-bar' }),
-	                _react2.default.createElement('span', { className: 'icon-bar' })
-	              ),
-	              _react2.default.createElement(
-	                _reactRouter.Link,
-	                { className: 'navbar-brand', to: '/' },
-	                this.props.logo
-	              )
+	              'button',
+	              { type: 'button', className: 'navbar-toggle collapsed', 'data-toggle': 'collapse', 'data-target': '#nav-collapse' },
+	              _react2.default.createElement('span', { className: 'icon-bar' }),
+	              _react2.default.createElement('span', { className: 'icon-bar' }),
+	              _react2.default.createElement('span', { className: 'icon-bar' })
 	            ),
 	            _react2.default.createElement(
-	              'div',
-	              { className: 'collapse navbar-collapse', id: 'nav-collapse' },
-	              _react2.default.createElement(
-	                'ul',
-	                { className: 'nav navbar-nav navbar-right' },
-	                this.renderLinks()
-	              )
+	              _reactRouter.Link,
+	              { className: 'navbar-brand', to: '/' },
+	              this.props.logo
+	            )
+	          ),
+	          _react2.default.createElement(
+	            'div',
+	            { className: 'collapse navbar-collapse', id: 'nav-collapse' },
+	            _react2.default.createElement(
+	              'ul',
+	              { className: 'nav navbar-nav navbar-right' },
+	              this.renderLinks()
 	            )
 	          )
 	        )
@@ -29888,51 +29884,6 @@
 	  }
 
 	  _createClass(FooterTemplate, [{
-	    key: 'renderLinks',
-	    value: function renderLinks() {
-	      if (this.props.authenticated) {
-	        return [
-	        // Authenticated navigation
-	        _react2.default.createElement(
-	          'li',
-	          { key: 1 },
-	          _react2.default.createElement(
-	            _reactRouter.Link,
-	            { to: '/' },
-	            'Home'
-	          )
-	        ), _react2.default.createElement(
-	          'li',
-	          { key: 2 },
-	          _react2.default.createElement(
-	            _reactRouter.Link,
-	            { to: 'logout' },
-	            'Logout'
-	          )
-	        )];
-	      } else {
-	        return [
-	        // Unauthenticated navigation
-	        _react2.default.createElement(
-	          'li',
-	          { key: 1 },
-	          _react2.default.createElement(
-	            _reactRouter.Link,
-	            { to: 'login' },
-	            'Login'
-	          )
-	        ), _react2.default.createElement(
-	          'li',
-	          { key: 2 },
-	          _react2.default.createElement(
-	            _reactRouter.Link,
-	            { to: 'register' },
-	            'Register'
-	          )
-	        )];
-	      }
-	    }
-	  }, {
 	    key: 'render',
 	    value: function render() {
 	      var d = new Date();
@@ -29940,33 +29891,16 @@
 
 	      return _react2.default.createElement(
 	        'footer',
-	        null,
+	        { className: 'footer' },
 	        _react2.default.createElement(
 	          'div',
 	          { className: 'container' },
 	          _react2.default.createElement(
-	            'div',
-	            { className: 'row' },
-	            _react2.default.createElement(
-	              'div',
-	              { className: 'col-lg-12' },
-	              _react2.default.createElement(
-	                'nav',
-	                null,
-	                _react2.default.createElement(
-	                  'ul',
-	                  { className: 'footer-nav' },
-	                  this.renderLinks()
-	                )
-	              ),
-	              _react2.default.createElement(
-	                'p',
-	                { className: 'copyright' },
-	                '\xA9 ',
-	                year,
-	                ', TuDooShe4ka. All Rights Reserved.'
-	              )
-	            )
+	            'p',
+	            { className: 'text-muted' },
+	            '\xA9 ',
+	            year,
+	            ', TuDooShe4ka. All Rights Reserved.'
 	          )
 	        )
 	      );
@@ -30207,36 +30141,60 @@
 	                    _react2.default.createElement(
 	                        'h2',
 	                        { className: 'form-signin-heading' },
-	                        'REGISTER'
+	                        'Please sign up'
 	                    ),
 	                    _react2.default.createElement(
-	                        'label',
-	                        { 'for': 'inputFirstname', className: 'sr-only' },
-	                        'Firstname'
+	                        'div',
+	                        { className: 'form-group' },
+	                        _react2.default.createElement(
+	                            'label',
+	                            { 'for': 'inputFirstname', className: 'sr-only' },
+	                            'Firstname'
+	                        ),
+	                        _react2.default.createElement(_reduxForm.Field, { id: 'inputFirstname', name: 'inputFirstname', type: 'text', className: 'form-control', placeholder: 'First name', component: 'input' })
 	                    ),
-	                    _react2.default.createElement(_reduxForm.Field, { id: 'inputFirstname', name: 'inputFirstname', type: 'text', className: 'form-control', placeholder: 'First name', component: 'input' }),
 	                    _react2.default.createElement(
-	                        'label',
-	                        { 'for': 'inputLastname', className: 'sr-only' },
-	                        'Lastname'
+	                        'div',
+	                        { className: 'form-group' },
+	                        _react2.default.createElement(
+	                            'label',
+	                            { 'for': 'inputLastname', className: 'sr-only' },
+	                            'Lastname'
+	                        ),
+	                        _react2.default.createElement(_reduxForm.Field, { id: 'inputLastname', name: 'inputLastname', type: 'text', className: 'form-control', placeholder: 'Last name', component: 'input' })
 	                    ),
-	                    _react2.default.createElement(_reduxForm.Field, { id: 'inputLastname', name: 'inputLastname', type: 'text', className: 'form-control', placeholder: 'Last name', component: 'input' }),
 	                    _react2.default.createElement(
-	                        'label',
-	                        { 'for': 'inputEmail', className: 'sr-only' },
-	                        'Email'
+	                        'div',
+	                        { className: 'form-group' },
+	                        _react2.default.createElement(
+	                            'label',
+	                            { 'for': 'inputEmail', className: 'sr-only' },
+	                            'Email'
+	                        ),
+	                        _react2.default.createElement(_reduxForm.Field, { id: 'inputEmail', name: 'inputEmail', type: 'email', className: 'form-control', placeholder: 'Email address', component: 'input' })
 	                    ),
-	                    _react2.default.createElement(_reduxForm.Field, { id: 'inputEmail', name: 'inputEmail', type: 'email', className: 'form-control', placeholder: 'Email address', component: 'input' }),
 	                    _react2.default.createElement(
-	                        'label',
-	                        { 'for': 'inputPassword', className: 'sr-only' },
-	                        'Password'
+	                        'div',
+	                        { className: 'form-group' },
+	                        _react2.default.createElement(
+	                            'label',
+	                            { 'for': 'inputPassword', className: 'sr-only' },
+	                            'Password'
+	                        ),
+	                        _react2.default.createElement(_reduxForm.Field, { id: 'inputPassword', name: 'inputPassword', type: 'password', className: 'form-control', placeholder: 'Password', component: 'input' })
 	                    ),
-	                    _react2.default.createElement(_reduxForm.Field, { id: 'inputPassword', name: 'inputPassword', type: 'password', className: 'form-control', placeholder: 'Password', component: 'input' }),
 	                    _react2.default.createElement(
-	                        'button',
-	                        { className: 'btn btn-lg btn-primary btn-block', type: 'submit' },
-	                        'Register'
+	                        'div',
+	                        { className: 'form-group' },
+	                        _react2.default.createElement(
+	                            'div',
+	                            { className: 'col-sm-offset-2 col-sm-10' },
+	                            _react2.default.createElement(
+	                                'button',
+	                                { className: 'btn btn-primary btn-block', type: 'submit' },
+	                                'Register'
+	                            )
+	                        )
 	                    ),
 	                    this.showError()
 	                )
@@ -43666,24 +43624,40 @@
 	                    _react2.default.createElement(
 	                        'h2',
 	                        { className: 'form-signin-heading' },
-	                        'LOGIN'
+	                        'Please sign in'
 	                    ),
 	                    _react2.default.createElement(
-	                        'label',
-	                        { 'for': 'inputEmail', className: 'sr-only' },
-	                        'Email'
+	                        'div',
+	                        { className: 'form-group' },
+	                        _react2.default.createElement(
+	                            'label',
+	                            { 'for': 'inputEmail', className: 'sr-only' },
+	                            'Email'
+	                        ),
+	                        _react2.default.createElement(_reduxForm.Field, { id: 'inputEmail', name: 'inputEmail', type: 'email', className: 'form-control', placeholder: 'Email address', component: 'input' })
 	                    ),
-	                    _react2.default.createElement(_reduxForm.Field, { id: 'inputEmail', name: 'inputEmail', type: 'email', className: 'form-control', placeholder: 'Email address', component: 'input' }),
 	                    _react2.default.createElement(
-	                        'label',
-	                        { 'for': 'inputPassword', className: 'sr-only' },
-	                        'Password'
+	                        'div',
+	                        { className: 'form-group' },
+	                        _react2.default.createElement(
+	                            'label',
+	                            { 'for': 'inputPassword', className: 'sr-only' },
+	                            'Password'
+	                        ),
+	                        _react2.default.createElement(_reduxForm.Field, { id: 'inputPassword', name: 'inputPassword', type: 'password', className: 'form-control', placeholder: 'Password', component: 'input' })
 	                    ),
-	                    _react2.default.createElement(_reduxForm.Field, { id: 'inputPassword', name: 'inputPassword', type: 'password', className: 'form-control', placeholder: 'Password', component: 'input' }),
 	                    _react2.default.createElement(
-	                        'button',
-	                        { className: 'btn btn-lg btn-primary btn-block', type: 'submit' },
-	                        'Login'
+	                        'div',
+	                        { className: 'form-group' },
+	                        _react2.default.createElement(
+	                            'div',
+	                            { className: 'col-sm-offset-2 col-sm-10' },
+	                            _react2.default.createElement(
+	                                'button',
+	                                { className: 'btn btn-primary btn-block', type: 'submit' },
+	                                'Login'
+	                            )
+	                        )
 	                    ),
 	                    this.showError()
 	                )
