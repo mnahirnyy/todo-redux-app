@@ -6,7 +6,7 @@ import { logoutUser } from './auth';
 export const API_URL = 'http://localhost:3000/api';
 export const CLIENT_ROOT_URL = 'http://localhost:3000';
 
-export function errorHandler(dispatch, error, type) {
+export function errorHandler (dispatch, error, type) {
   console.log('Error type: ', type);
   console.log(error);
 
@@ -21,7 +21,7 @@ export function errorHandler(dispatch, error, type) {
 }
 
 export function fetchUser(uid) {
-  return function(dispatch) {
+  return function (dispatch) {
     axios.get(`${API_URL}/user/&{uid}`, {
       headers: { Authorization: cookie.load('token') },
     })
@@ -34,9 +34,6 @@ export function fetchUser(uid) {
     .catch(response => dispatch(errorHadler(response.data.error)));
   }
 }
-
-
-
 // export function getTodos() {
 //   return function(dispatch) {
 //     // console.log('testing it out');
