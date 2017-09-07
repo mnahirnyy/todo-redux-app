@@ -6,9 +6,9 @@ import reducers from './reducers';
 const createStoreWithMiddleware = applyMiddleware(reduxThunk)(createStore);
 const store = createStoreWithMiddleware(reducers);
 
-const token = cookie.load('token');
-if (token) {
-    store.dispatch({ type: AUTH_USER });
-}
+// const token = cookie.load('token');
+// if (token) {
+//     store.dispatch({ type: AUTH_USER });
+// }
 
 export default store;
