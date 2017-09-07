@@ -1,17 +1,22 @@
 module.exports = (sequelize, DataTypes) => {
-  const Todo = sequelize.define('Todo', {
-    title: {
-      type: DataTypes.STRING,
-      allowNull: false
-    },
-  });
-
-  Todo.associate = (models) => {
-    Todo.hasMany(models.TodoItem, {
-      foreignKey: 'todoId',
-      as: 'todoItems',
+    const Todo = sequelize.define('Todo', {
+        title: {
+            type: DataTypes.STRING,
+            allowNull: false
+        },
     });
-  };
-  
-  return Todo;
+
+    Todo.associate = (models) => {
+        Todo.hasMany(models.TodoItem, {
+            foreignKey: 'todoId',
+            as: 'todoItems',
+        });
+
+        Todo.belongsTo(models.User, {
+            foreignKey: 'sectionId',
+            onDelete: 'CASCADE',
+        });
+    };
+
+    return Todo;
 };
