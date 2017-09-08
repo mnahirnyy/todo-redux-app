@@ -25,11 +25,14 @@ module.exports = {
                 type: Sequelize.STRING,
                 defaultValue: 'regular_user',
             },
-            gooleLogin: {
-                type: Sequelize.STRING
+            provider: {
+                type: DataTypes.STRING
             },
-            facebookLogin: {
-                type: Sequelize.STRING
+            providerId: {
+                type: DataTypes.STRING
+            },
+            jwtToken: {
+                type: DataTypes.STRING
             },
             createdAt: {
                 allowNull: false,
