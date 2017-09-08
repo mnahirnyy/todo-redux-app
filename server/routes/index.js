@@ -22,37 +22,25 @@
 //   }));
 // };
 
-const AuthCtrl = require('../controllers/authentication');
-const UserCtrl = require('../controllers/user');
+// dependencies
 const express = require('express');
 const passport = require('passport');
 
-const passportService = require('../config/passport');
+// controllers
+const authCtrl = require('../controllers/authentication');
 
-// Middleware for login/auth
+// middleware
 const requireAuth = passport.authenticate('jwt', { session: false });
 const requireLogin = passport.authenticate('local', { session: false });
 
 module.exports = function (app) {
-  const apiRoutes = express.Router(),
-        authRoutes = express.Router(),
-        userRoutes = express.Router();
+    const apiRoutes = express.Router();
+    const authRoutes = express.Router();
 
-  // Set auth routes as subgroup/middleware to apiRoutes
-  apiRoutes.use('/auth', authRoutes);
+    apiRoutes.use('/auth', authRoutes);
+    authRoutes.post('/login', requireLogin, authCtrl.login); // login
+    authRoutes.post('/register', authCtrl.register); // register
 
-  // Registration route
-  authRoutes.post('/register', AuthenticationController.register);
-
-  // Login route
-  authRoutes.post('/login', requireLogin, AuthenticationController.login);
-
-  // Set user routes as a subgroup/middleware to apiRoutes
-  apiRoutes.use('/user', userRoutes);
-
-  // View user profile route
-  userRoutes.get('/:userId', requireAuth, UserController.viewProfile);      
-
-  // Set url for API group routes
-  app.use('/api', apiRoutes);
+    // use all the routes
+    app.use('/api', apiRoutes);
 };

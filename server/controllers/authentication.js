@@ -1,112 +1,97 @@
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
-const User = require('../models/user');
-const mailgun = require('../config/mailgun');
-// const mailchimp = require('../config/mailchimp');
-const setUserInfo = require('../helpers').setUserInfo;
-const getRole = require('../helpers').getRole;
+const User = require('../models/').User;
 const config = require('../config/main');
 
 // Generate JWT
-// TO-DO Add issuer and audience
 function generateToken(user) {
-  return jwt.sign(user, config.secret, {
-    expiresIn: 604800 // in seconds
-  });
+    return jwt.sign(user, config.secret, {
+        expiresIn: 604800, // in seconds
+    });
 }
 
-//= =======================================
-// Login Route
-//= =======================================
-exports.login = function (req, res, next) {
-  const userInfo = setUserInfo(req.user);
-
-  res.status(200).json({
-    token: `JWT ${generateToken(userInfo)}`,
-    user: userInfo
-  });
+function setUserInfo(request) {
+    const getUserInfo = {
+        _id: request._id,
+        firstName: request.profile.firstName,
+        lastName: request.profile.lastName,
+        email: request.email,
+        role: request.role,
+    };
+    return getUserInfo;
 };
 
+// Login Route
+exports.login = function (req, res, next) {
+    console.log('Login', req.body);
 
-//= =======================================
+    // const userInfo = setUserInfo(req.user);
+
+    // res.status(200).json({
+    //     token: `JWT ${generateToken(userInfo)}`,
+    //     user: userInfo
+    // });
+};
+
 // Registration Route
-//= =======================================
 exports.register = function (req, res, next) {
-  // Check for registration errors
-  const email = req.body.email;
-  const firstName = req.body.firstName;
-  const lastName = req.body.lastName;
-  const password = req.body.password;
+    // Check for registration errors
+    const email = req.body.email;
+    const firstName = req.body.firstName;
+    const lastName = req.body.lastName;
+    const password = req.body.password;
 
-  // Return error if no email provided
-  if (!email) {
-    return res.status(422).send({ error: 'You must enter an email address.' });
-  }
-
-  // Return error if full name not provided
-  if (!firstName || !lastName) {
-    return res.status(422).send({ error: 'You must enter your full name.' });
-  }
-
-  // Return error if no password provided
-  if (!password) {
-    return res.status(422).send({ error: 'You must enter a password.' });
-  }
-
-  User.findOne({ email }, (err, existingUser) => {
-    if (err) { return next(err); }
-
-      // If user is not unique, return error
-    if (existingUser) {
-      return res.status(422).send({ error: 'That email address is already in use.' });
+    // Return error if no email provided
+    if (!email) {
+        return res.status(422).send({
+            error: 'You must enter an email address.'
+        });
     }
 
-      // If email is unique and password was provided, create account
-    const user = new User({
-      email,
-      password,
-      profile: { firstName, lastName }
-    });
+    // Return error if full name not provided
+    if (!firstName || !lastName) {
+        return res.status(422).send({
+            error: 'You must enter your full name.'
+        });
+    }
 
-    user.save((err, user) => {
-      if (err) { return next(err); }
+    // Return error if no password provided
+    if (!password) {
+        return res.status(422).send({
+            error: 'You must enter a password.'
+        });
+    }
 
-        // Subscribe member to Mailchimp list
-        // mailchimp.subscribeToNewsletter(user.email);
+    User.find({
+            where: {
+                email: email,
+            }
+        })
+        .then(existingUser => {
+            console.log('Found user', existingUser);
 
-        // Respond with JWT if user was created
+            if (existingUser) {
+                return res.status(422).send({ error: 'That email address is already in use.' });
+            }
 
-      const userInfo = setUserInfo(user);
+            // If email is unique and password was provided, create account
+            const _userData = new User({
+                email,
+                password,
+                firstName,
+                lastName,
+            });
 
-      res.status(201).json({
-        token: `JWT ${generateToken(userInfo)}`,
-        user: userInfo
-      });
-    });
-  });
-};
+            User.create(_userData)
+                .then(user => {
+                    const userInfo = setUserInfo(user);
 
-//= =======================================
-// Authorization Middleware
-//= =======================================
-
-// Role authorization check
-exports.roleAuthorization = function (requiredRole) {
-  return function (req, res, next) {
-    const user = req.user;
-
-    User.findById(user._id, (err, foundUser) => {
-      if (err) {
-        res.status(422).json({ error: 'No user was found.' });
-        return next(err);
-      }
-
-      // If user is found, check role.
-      if (getRole(foundUser.role) >= getRole(requiredRole)) {
-        return next();
-      }
-
-      return res.status(401).json({ error: 'You are not authorized to view this content.' });
-    });
-  };
+                    res.status(201).json({
+                        token: `JWT ${generateToken(userInfo)}`,
+                        user: userInfo
+                    });
+                })
+                .catch(ex => Promise.reject(ex));
+        })
+        .catch(err => next(err));
 };
