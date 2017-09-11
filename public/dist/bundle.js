@@ -41244,35 +41244,33 @@
 	exports.loginUser = loginUser;
 	exports.registerUser = registerUser;
 	exports.logoutUser = logoutUser;
+	exports.fetchMessage = fetchMessage;
 
 	var _axios = __webpack_require__(511);
 
 	var _axios2 = _interopRequireDefault(_axios);
 
-	var _reactRouter = __webpack_require__(217);
-
-	var _reactCookie = __webpack_require__(536);
-
-	var _reactCookie2 = _interopRequireDefault(_reactCookie);
-
-	var _index = __webpack_require__(544);
+	var _index = __webpack_require__(536);
 
 	var _types = __webpack_require__(545);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var ROOT_URL = '//localhost:3000';
 
 	function loginUser(_ref) {
 	    var email = _ref.email,
 	        password = _ref.password;
 
 	    return function (dispatch) {
-	        _axios2.default.post(_index.API_URL + '/auth/login', { email: email, password: password }).then(function (response) {
-	            _reactCookie2.default.save('token', response.data.token, { path: '/' });
-	            _reactCookie2.default.save('user', response.data.user, { path: '/' });
+	        // Submit email/pass to server
+	        _axios2.default.post(ROOT_URL + '/signin', { email: email, password: password }).then(function (res) {
 	            dispatch({ type: _types.AUTH_USER });
+	            window.localStorage.setItem('token', res.data.token);
 	            window.location.href = _index.CLIENT_ROOT_URL + '/dashboard';
+	            // history.push('/dashboard');
 	        }).catch(function (error) {
-	            (0, _index.errorHandler)(dispatch, error.response, _types.AUTH_ERROR);
+	            errorHandler(dispatch, error.response, _types.AUTH_ERROR);
 	        });
 	    };
 	}
@@ -41284,25 +41282,52 @@
 	        password = _ref2.password;
 
 	    return function (dispatch) {
-	        _axios2.default.post(_index.API_URL + '/auth/register', { email: email, firstName: firstName, lastName: lastName, password: password }).then(function (response) {
-	            _reactCookie2.default.save('token', response.data.token, { path: '/' });
-	            _reactCookie2.default.save('user', response.data.user, { path: '/' });
+	        _axios2.default.post(ROOT_URL + '/signup', { email: email, password: password }).then(function (res) {
+	            // cookie.save('token', response.data.token, { path: '/' });
+	            // cookie.save('user', response.data.user, { path: '/' });
 	            dispatch({ type: _types.AUTH_USER });
+	            window.localStorage.setItem('token', res.data.token);
 	            window.location.href = _index.CLIENT_ROOT_URL + '/dashboard';
+	            // history.push('/dashboard');
 	        }).catch(function (error) {
-	            (0, _index.errorHandler)(dispatch, error.response, _types.AUTH_ERROR);
+	            errorHandler(dispatch, error.response.data.error || error.message, _types.AUTH_ERROR);
 	        });
 	    };
 	}
 
-	function logoutUser(error) {
-	    return function (dispatch) {
-	        dispatch({ type: _types.UNAUTH_USER, payload: error || '' });
-	        _reactCookie2.default.remove('token', { path: '/' });
-	        _reactCookie2.default.remove('user', { path: '/' });
+	function logoutUser() {
+	    window.localStorage.removeItem('token');
+	    return { type: _types.UNAUTH_USER };
+	}
 
-	        window.location.href = _index.CLIENT_ROOT_URL + '/login';
+	function fetchMessage() {
+	    return function (dispatch) {
+	        _axios2.default.get(_index.CLIENT_ROOT_URL, {
+	            headers: { authorization: window.localStorage.getItem('token') }
+	        }).then(function (res) {
+	            console.log('fetchMessage response', res);
+	            dispatch({
+	                type: _types.FETCH_MESSAGE,
+	                payload: res.data.message
+	            });
+	        }).catch(function (err) {
+	            console.log('fetchMessage error', err.response.data.error || err.message);
+	        });
 	    };
+	}
+
+	function errorHandler(dispatch, error, type) {
+	    console.log('Error type: ', type);
+	    console.log(error);
+
+	    var errorMessage = error.response ? error.response.data : error;
+
+	    if (error.status === 401 || error.response.status === 401) {
+	        errorMessage = 'You are not authorized to do this.';
+	        // return dispatch(logoutUser(errorMessage));
+	    }
+
+	    dispatch({ type: type, payload: errorMessage });
 	}
 
 /***/ }),
@@ -42803,35 +42828,146 @@
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
+	exports.CLIENT_ROOT_URL = exports.API_URL = undefined;
+	exports.fetchUser = fetchUser;
 
-	var _Cookies = __webpack_require__(537);
+	var _axios = __webpack_require__(511);
 
-	Object.defineProperty(exports, 'Cookies', {
-	  enumerable: true,
-	  get: function get() {
-	    return _interopRequireDefault(_Cookies).default;
-	  }
-	});
+	var _axios2 = _interopRequireDefault(_axios);
 
-	var _CookiesProvider = __webpack_require__(542);
+	var _reactCookie = __webpack_require__(537);
 
-	Object.defineProperty(exports, 'CookiesProvider', {
-	  enumerable: true,
-	  get: function get() {
-	    return _interopRequireDefault(_CookiesProvider).default;
-	  }
-	});
-
-	var _withCookies = __webpack_require__(543);
-
-	Object.defineProperty(exports, 'withCookies', {
-	  enumerable: true,
-	  get: function get() {
-	    return _interopRequireDefault(_withCookies).default;
-	  }
-	});
+	var _reactCookie2 = _interopRequireDefault(_reactCookie);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	// import { logoutUser } from './auth';
+
+	// import * as types from './types';
+	var API_URL = exports.API_URL = 'http://localhost:3000/api';
+	var CLIENT_ROOT_URL = exports.CLIENT_ROOT_URL = 'http://localhost:3000';
+
+	// export function errorHandler (dispatch, error, type) {
+	//   console.log('Error type: ', type);
+	//   console.log(error);
+
+	//   let errorMessage = error.response ? error.response.data : error;
+
+	//   if (error.status === 401 || error.response.status === 401) {
+	//     errorMessage = 'You are not authorized to do this.';
+	//     return dispatch(logoutUser(errorMessage));
+	//   }
+
+	//   dispatch({ type, payload: errorMessage });
+	// }
+
+	function fetchUser(uid) {
+	  return function (dispatch) {
+	    _axios2.default.get(API_URL + '/user/&{uid}', {
+	      headers: { Authorization: _reactCookie2.default.load('token') }
+	    }).then(function (response) {
+	      dispatch({
+	        type: FETCH_USER,
+	        payload: response.data.user
+	      });
+	    }).catch(function (response) {
+	      return dispatch(errorHadler(response.data.error));
+	    });
+	  };
+	}
+	// export function getTodos() {
+	//   return function(dispatch) {
+	//     // console.log('testing it out');
+	//     console.log(dispatch)
+	//     axios.get('/api/todos')
+	//       .then(({ data: { data } }) => {
+	//         dispatch({
+	//           type: types.GET_TODOS,
+	//           payload: data
+	//         });
+	//       })
+	//       .catch(err => {
+	//         console.log(err);
+	//       });
+	//   }
+	// }
+
+	// export function getTodo({ id: todoId }) {
+	//   return function(dispatch) {
+	//     axios.get(`/api/todos/${todoId}`)
+	//       .then(({ data: { data } }) => {
+	//         dispatch({
+	//           type: types.GET_TODO,
+	//           payload: data
+	//         });
+	//       })
+	//       .catch(err => {
+	//         console.error(err);
+	//         // alert('there was a problem with your request');
+	//       });
+	//   }
+	// }
+
+	// export function createTodo(todo) {
+	//   return function(dispatch) {
+	//     axios.post('/api/todos', todo)
+	//       .then(({ data }) => {
+	//         console.log(0);
+	//         dispatch({
+	//           type: types.CREATE_TODO,
+	//           payload: true
+	//         });
+	//       })
+	//       .catch(err => {
+	//         console.log(1);
+	//         dispatch({
+	//           type: types.CREATE_TODO,
+	//           payload: false
+	//         });
+	//         throw err;
+	//       });
+	//   }
+	// }
+
+	// export function editTodo(todo) {
+	//   return function(dispatch) {
+	//     axios.put(`/api/todos/${todo.id}`, todo)
+	//       .then(({ data }) => {
+	//         console.log('from actions ', data);
+	//         dispatch({
+	//           type: types.EDIT_TODO,
+	//           payload: true
+	//         })
+	//       })
+	//       .catch(err => {
+	//         console.error(err);
+	//         dispatch({
+	//           type: types.EDIT_TODO,
+	//           payload: false
+	//         });
+	//       });
+	//   }
+	// }
+
+	// export function deleteTodo({ id: todoId }) {
+	//   return function(dispatch) {
+	//     axios.delete(`/api/todos/${todoId}`)
+	//       .then(({ data }) => {
+	//         console.log(data);
+	//         dispatch({
+	//           type: types.DELETE_TODO,
+	//           payload: true
+	//         });
+	//       })
+	//       .catch(err => {
+	//         console.error(err);
+	//         dispatch({
+	//           type: types.DELETE_TODO,
+	//           payload: false
+	//         });
+	//       });
+	//   }
+	// }
 
 /***/ }),
 /* 537 */
@@ -42843,14 +42979,34 @@
 	  value: true
 	});
 
-	var _universalCookie = __webpack_require__(538);
+	var _Cookies = __webpack_require__(538);
 
-	var _universalCookie2 = _interopRequireDefault(_universalCookie);
+	Object.defineProperty(exports, 'Cookies', {
+	  enumerable: true,
+	  get: function get() {
+	    return _interopRequireDefault(_Cookies).default;
+	  }
+	});
+
+	var _CookiesProvider = __webpack_require__(543);
+
+	Object.defineProperty(exports, 'CookiesProvider', {
+	  enumerable: true,
+	  get: function get() {
+	    return _interopRequireDefault(_CookiesProvider).default;
+	  }
+	});
+
+	var _withCookies = __webpack_require__(544);
+
+	Object.defineProperty(exports, 'withCookies', {
+	  enumerable: true,
+	  get: function get() {
+	    return _interopRequireDefault(_withCookies).default;
+	  }
+	});
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	exports.default = _universalCookie2.default;
-	module.exports = exports['default'];
 
 /***/ }),
 /* 538 */
@@ -42862,13 +43018,13 @@
 	  value: true
 	});
 
-	var _Cookies = __webpack_require__(539);
+	var _universalCookie = __webpack_require__(539);
 
-	var _Cookies2 = _interopRequireDefault(_Cookies);
+	var _universalCookie2 = _interopRequireDefault(_universalCookie);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	exports.default = _Cookies2.default;
+	exports.default = _universalCookie2.default;
 	module.exports = exports['default'];
 
 /***/ }),
@@ -42881,11 +43037,30 @@
 	  value: true
 	});
 
+	var _Cookies = __webpack_require__(540);
+
+	var _Cookies2 = _interopRequireDefault(_Cookies);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	exports.default = _Cookies2.default;
+	module.exports = exports['default'];
+
+/***/ }),
+/* 540 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
 	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-	var _cookie = __webpack_require__(540);
+	var _cookie = __webpack_require__(541);
 
 	var _cookie2 = _interopRequireDefault(_cookie);
 
@@ -42893,7 +43068,7 @@
 
 	var _objectAssign2 = _interopRequireDefault(_objectAssign);
 
-	var _utils = __webpack_require__(541);
+	var _utils = __webpack_require__(542);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -43017,7 +43192,7 @@
 	module.exports = exports['default'];
 
 /***/ }),
-/* 540 */
+/* 541 */
 /***/ (function(module, exports) {
 
 	/*!
@@ -43218,7 +43393,7 @@
 
 
 /***/ }),
-/* 541 */
+/* 542 */
 /***/ (function(module, exports) {
 
 	'use strict';
@@ -43240,7 +43415,7 @@
 	}
 
 /***/ }),
-/* 542 */
+/* 543 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -43255,7 +43430,7 @@
 
 	var _propTypes = __webpack_require__(187);
 
-	var _universalCookie = __webpack_require__(538);
+	var _universalCookie = __webpack_require__(539);
 
 	var _universalCookie2 = _interopRequireDefault(_universalCookie);
 
@@ -43311,7 +43486,7 @@
 	module.exports = exports['default'];
 
 /***/ }),
-/* 543 */
+/* 544 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -43330,7 +43505,7 @@
 
 	var _propTypes = __webpack_require__(187);
 
-	var _universalCookie = __webpack_require__(538);
+	var _universalCookie = __webpack_require__(539);
 
 	var _universalCookie2 = _interopRequireDefault(_universalCookie);
 
@@ -43371,156 +43546,6 @@
 	module.exports = exports['default'];
 
 /***/ }),
-/* 544 */
-/***/ (function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	exports.CLIENT_ROOT_URL = exports.API_URL = undefined;
-	exports.errorHandler = errorHandler;
-	exports.fetchUser = fetchUser;
-
-	var _axios = __webpack_require__(511);
-
-	var _axios2 = _interopRequireDefault(_axios);
-
-	var _reactCookie = __webpack_require__(536);
-
-	var _reactCookie2 = _interopRequireDefault(_reactCookie);
-
-	var _auth = __webpack_require__(510);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	var API_URL = exports.API_URL = 'http://localhost:3000/api'; // import * as types from './types';
-	var CLIENT_ROOT_URL = exports.CLIENT_ROOT_URL = 'http://localhost:3000';
-
-	function errorHandler(dispatch, error, type) {
-	  console.log('Error type: ', type);
-	  console.log(error);
-
-	  var errorMessage = error.response ? error.response.data : error;
-
-	  if (error.status === 401 || error.response.status === 401) {
-	    errorMessage = 'You are not authorized to do this.';
-	    return dispatch((0, _auth.logoutUser)(errorMessage));
-	  }
-
-	  dispatch({ type: type, payload: errorMessage });
-	}
-
-	function fetchUser(uid) {
-	  return function (dispatch) {
-	    _axios2.default.get(API_URL + '/user/&{uid}', {
-	      headers: { Authorization: _reactCookie2.default.load('token') }
-	    }).then(function (response) {
-	      dispatch({
-	        type: FETCH_USER,
-	        payload: response.data.user
-	      });
-	    }).catch(function (response) {
-	      return dispatch(errorHadler(response.data.error));
-	    });
-	  };
-	}
-	// export function getTodos() {
-	//   return function(dispatch) {
-	//     // console.log('testing it out');
-	//     console.log(dispatch)
-	//     axios.get('/api/todos')
-	//       .then(({ data: { data } }) => {
-	//         dispatch({
-	//           type: types.GET_TODOS,
-	//           payload: data
-	//         });
-	//       })
-	//       .catch(err => {
-	//         console.log(err);
-	//       });
-	//   }
-	// }
-
-	// export function getTodo({ id: todoId }) {
-	//   return function(dispatch) {
-	//     axios.get(`/api/todos/${todoId}`)
-	//       .then(({ data: { data } }) => {
-	//         dispatch({
-	//           type: types.GET_TODO,
-	//           payload: data
-	//         });
-	//       })
-	//       .catch(err => {
-	//         console.error(err);
-	//         // alert('there was a problem with your request');
-	//       });
-	//   }
-	// }
-
-	// export function createTodo(todo) {
-	//   return function(dispatch) {
-	//     axios.post('/api/todos', todo)
-	//       .then(({ data }) => {
-	//         console.log(0);
-	//         dispatch({
-	//           type: types.CREATE_TODO,
-	//           payload: true
-	//         });
-	//       })
-	//       .catch(err => {
-	//         console.log(1);
-	//         dispatch({
-	//           type: types.CREATE_TODO,
-	//           payload: false
-	//         });
-	//         throw err;
-	//       });
-	//   }
-	// }
-
-	// export function editTodo(todo) {
-	//   return function(dispatch) {
-	//     axios.put(`/api/todos/${todo.id}`, todo)
-	//       .then(({ data }) => {
-	//         console.log('from actions ', data);
-	//         dispatch({
-	//           type: types.EDIT_TODO,
-	//           payload: true
-	//         })
-	//       })
-	//       .catch(err => {
-	//         console.error(err);
-	//         dispatch({
-	//           type: types.EDIT_TODO,
-	//           payload: false
-	//         });
-	//       });
-	//   }
-	// }
-
-	// export function deleteTodo({ id: todoId }) {
-	//   return function(dispatch) {
-	//     axios.delete(`/api/todos/${todoId}`)
-	//       .then(({ data }) => {
-	//         console.log(data);
-	//         dispatch({
-	//           type: types.DELETE_TODO,
-	//           payload: true
-	//         });
-	//       })
-	//       .catch(err => {
-	//         console.error(err);
-	//         dispatch({
-	//           type: types.DELETE_TODO,
-	//           payload: false
-	//         });
-	//       });
-	//   }
-	// }
-
-/***/ }),
 /* 545 */
 /***/ (function(module, exports) {
 
@@ -43540,6 +43565,7 @@
 	var AUTH_ERROR = exports.AUTH_ERROR = 'auth_error';
 
 	var FETCH_USER = exports.FETCH_USER = 'fetch_user';
+	var FETCH_MESSAGE = exports.FETCH_MESSAGE = 'fetch_message';
 
 /***/ }),
 /* 546 */
@@ -43756,7 +43782,7 @@
 
 	var _reduxThunk2 = _interopRequireDefault(_reduxThunk);
 
-	var _reactCookie = __webpack_require__(536);
+	var _reactCookie = __webpack_require__(537);
 
 	var _reactCookie2 = _interopRequireDefault(_reactCookie);
 
@@ -43811,7 +43837,7 @@
 	'use strict';
 
 	Object.defineProperty(exports, "__esModule", {
-	  value: true
+	    value: true
 	});
 
 	var _redux = __webpack_require__(194);
@@ -43831,10 +43857,10 @@
 	// import todosReducer from './todosReducer';
 
 	var rootReducer = (0, _redux.combineReducers)({
-	  form: _reduxForm.reducer,
-	  auth: _auth_reducer2.default,
-	  user: _user_reducer2.default
-	  // todos: todosReducer,
+	    form: _reduxForm.reducer,
+	    auth: _auth_reducer2.default,
+	    user: _user_reducer2.default
+	    // todos: todosReducer,
 	});
 
 	exports.default = rootReducer;

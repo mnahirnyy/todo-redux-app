@@ -1,97 +1,54 @@
-const jwt = require('jsonwebtoken');
-const crypto = require('crypto');
-const User = require('../models/').User;
+const jwt = require('jwt-simple');
 const config = require('../config/main');
+const User = require('../models').User;
 
-// Generate JWT
-function generateToken(user) {
-    return jwt.sign(user, config.secret, {
-        expiresIn: 604800, // in seconds
+const tokenForUser = user => {
+    const timestamp = new Date().getTime();
+    // subject = user id, issued at time
+    return jwt.encode({
+        sub: user.id,
+        iat: timestamp,
+    }, config.secret);
+};
+
+exports.signin = function (req, res, next) {
+    console.log('Login route', req.body);
+    // User is auth, just need to give it a token
+    res.send({ token: tokenForUser(req.user) });
+};
+
+exports.signup = function (req, res, next) {
+    console.log('Register route', req.body);
+    const { email, password } = req.body;
+
+    // Check if email exists in database
+    User.findOne({ email }, (err, existingUser) => {
+        if (err) {
+            return next(err);
+        }
+
+        if (!email || !password) {
+            return res
+                .status(422)
+                .send({ error: 'Must provide email and password' });
+        }
+
+        // If email already exists return error
+        if (existingUser) {
+            return res
+                .status(422)
+                .send({ error: 'Email is in use' });
+        }
+
+        // If a new user add to database
+        const user = new User({ email, password });
+
+        user.save(ex => {
+            if (ex) {
+                return next(ex);
+            }
+            // Respond to request
+            res.json({ token: tokenForUser(user) });
+        });
     });
-}
-
-function setUserInfo(request) {
-    const getUserInfo = {
-        _id: request._id,
-        firstName: request.profile.firstName,
-        lastName: request.profile.lastName,
-        email: request.email,
-        role: request.role,
-    };
-    return getUserInfo;
-};
-
-// Login Route
-exports.login = function (req, res, next) {
-    console.log('Login', req.body);
-
-    // const userInfo = setUserInfo(req.user);
-
-    // res.status(200).json({
-    //     token: `JWT ${generateToken(userInfo)}`,
-    //     user: userInfo
-    // });
-};
-
-// Registration Route
-exports.register = function (req, res, next) {
-    // Check for registration errors
-    const email = req.body.email;
-    const firstName = req.body.firstName;
-    const lastName = req.body.lastName;
-    const password = req.body.password;
-
-    // Return error if no email provided
-    if (!email) {
-        return res.status(422).send({
-            error: 'You must enter an email address.'
-        });
-    }
-
-    // Return error if full name not provided
-    if (!firstName || !lastName) {
-        return res.status(422).send({
-            error: 'You must enter your full name.'
-        });
-    }
-
-    // Return error if no password provided
-    if (!password) {
-        return res.status(422).send({
-            error: 'You must enter a password.'
-        });
-    }
-
-    User.find({
-            where: {
-                email: email,
-            }
-        })
-        .then(existingUser => {
-            console.log('Found user', existingUser);
-
-            if (existingUser) {
-                return res.status(422).send({ error: 'That email address is already in use.' });
-            }
-
-            // If email is unique and password was provided, create account
-            const _userData = new User({
-                email,
-                password,
-                firstName,
-                lastName,
-            });
-
-            User.create(_userData)
-                .then(user => {
-                    const userInfo = setUserInfo(user);
-
-                    res.status(201).json({
-                        token: `JWT ${generateToken(userInfo)}`,
-                        user: userInfo
-                    });
-                })
-                .catch(ex => Promise.reject(ex));
-        })
-        .catch(err => next(err));
 };

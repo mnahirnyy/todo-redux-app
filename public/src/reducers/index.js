@@ -5,10 +5,10 @@ import userReducer from './user_reducer';
 // import todosReducer from './todosReducer';
 
 const rootReducer = combineReducers({
-  form: formReducer,
-  auth: authReducer,
-  user: userReducer,
-  // todos: todosReducer,
+    form: formReducer,
+    auth: authReducer,
+    user: userReducer,
+    // todos: todosReducer,
 });
 
 export default rootReducer;
